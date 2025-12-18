@@ -59,7 +59,7 @@ model Student {
   updatedAt    DateTime @updatedAt
 }
 
-model Class {
+model classes {
   id          Int      @id @default(autoincrement())
   name        String
   code        String   @unique
@@ -79,7 +79,7 @@ model Class {
   updatedAt   DateTime @updatedAt
 }
 
-model StudentClass {
+model student_class {
   id         Int      @id @default(autoincrement())
   studentId  Int
   classId    Int
@@ -93,7 +93,7 @@ model StudentClass {
   @@unique([studentId, classId])
 }
 
-model AttendanceSession {
+model attendance_sessions {
   id          Int      @id @default(autoincrement())
   classId     Int
   sessionDate DateTime
