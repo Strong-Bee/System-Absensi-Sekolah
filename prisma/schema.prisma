@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -104,11 +103,12 @@ model AttendanceSession {
   qrCode      String
   status      SessionStatus
 
-  class       Class
+  class       Class    @relation(fields: [classId], references: [id])
   attendance  Attendance[]
 
   createdAt   DateTime @default(now())
 }
+
 
 model Attendance {
   id         Int      @id @default(autoincrement())
