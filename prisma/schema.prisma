@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  GURU
+}
+
+enum AttendanceStatus {
+  HADIR
+  IZIN
+  SAKIT
+  ALPHA
+}
+
+enum SessionStatus {
+  OPEN
+  CLOSED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole
+
+  phone     String?
+  photo     String?
+
+  classes             Class[]            @relation("TeacherClasses")
+  attendance_created  Attendance[]        @relation("CreatedBy")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Student {
+  id           Int      @id @default(autoincrement())
+  nisn         String   @unique
+  name         String
+  email        String?
+  phone        String?
+
+  address      String?
+  parentName   String?
+  parentPhone  String?
+  photo        String?
+
+  classes      StudentClass[]
+  attendance   Attendance[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Class {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  gradeLevel  String
+
+  teacherId   Int
+  room        String?
+  capacity    Int?
+  description String?
+
+  teacher     User     @relation("TeacherClasses", fields: [teacherId], references: [id])
+  students    StudentClass[]
+  sessions    AttendanceSession[]
+  attendance  Attendance[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudentClass {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  classId    Int
+
+  enrolledAt DateTime @default(now())
+  status     String
+
+  student    Student  @relation(fields: [studentId], references: [id])
+  class      Class    @relation(fields: [classId], references: [id])
+
+  @@unique([studentId, classId])
+}
+
+model AttendanceSession {
+  id          Int      @id @default(autoincrement())
+  classId     Int
+  sessionDate DateTime
+
+  startTime   DateTime
+  endTime     DateTime
+  qrCode      String
+  status      SessionStatus
+
+  class       Class
+  attendance  Attendance[]
+
+  createdAt   DateTime @default(now())
+}
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  classId    Int
+  sessionId  Int
+
+  status     AttendanceStatus
+  scannedAt  DateTime?
+  notes      String?
+
+  createdBy  Int
+  createdAt  DateTime @default(now())
+
+  student    Student  @relation(fields: [studentId], references: [id])
+  class      Class    @relation(fields: [classId], references: [id])
+  session    AttendanceSession @relation(fields: [sessionId], references: [id])
+  creator    User     @relation("CreatedBy", fields: [createdBy], references: [id])
+
+  @@unique([studentId, sessionId])
+}
