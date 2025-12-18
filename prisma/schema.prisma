@@ -6,6 +6,7 @@ datasource db {
   provider = "mysql"
 }
 
+/* ================= ENUM ================= */
 enum UserRole {
   ADMIN
   GURU
@@ -23,6 +24,7 @@ enum SessionStatus {
   CLOSED
 }
 
+/* ================= USERS (Guru/Admin) ================= */
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -33,13 +35,16 @@ model User {
   phone     String?
   photo     String?
 
-  classes             Class[]            @relation("TeacherClasses")
-  attendance_created  Attendance[]        @relation("CreatedBy")
+  classes            Class[]      @relation("TeacherClasses")
+  attendance_created Attendance[] @relation("CreatedBy")
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
+/* ================= STUDENTS (Siswa) ================= */
 model Student {
   id           Int      @id @default(autoincrement())
   nisn         String   @unique
@@ -57,9 +62,12 @@ model Student {
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@map("students")
 }
 
-model classes {
+/* ================= CLASSES (Kelas) ================= */
+model Class {
   id          Int      @id @default(autoincrement())
   name        String
   code        String   @unique
@@ -72,14 +80,17 @@ model classes {
 
   teacher     User     @relation("TeacherClasses", fields: [teacherId], references: [id])
   students    StudentClass[]
-  sessions    AttendanceSession[]
+  attendance_sessions AttendanceSession[]
   attendance  Attendance[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("classes")
 }
 
-model student_class {
+/* ================= STUDENT_CLASS (Enrollment) ================= */
+model StudentClass {
   id         Int      @id @default(autoincrement())
   studentId  Int
   classId    Int
@@ -87,13 +98,15 @@ model student_class {
   enrolledAt DateTime @default(now())
   status     String
 
-  student    Student  @relation(fields: [studentId], references: [id])
-  class      Class    @relation(fields: [classId], references: [id])
+  student    Student @relation(fields: [studentId], references: [id])
+  class      Class   @relation(fields: [classId], references: [id])
 
   @@unique([studentId, classId])
+  @@map("student_class")
 }
 
-model attendance_sessions {
+/* ================= ATTENDANCE_SESSIONS (QR Sessions) ================= */
+model AttendanceSession {
   id          Int      @id @default(autoincrement())
   classId     Int
   sessionDate DateTime
@@ -103,13 +116,15 @@ model attendance_sessions {
   qrCode      String
   status      SessionStatus
 
-  class       Class    @relation(fields: [classId], references: [id])
+  class       Class       @relation(fields: [classId], references: [id])
   attendance  Attendance[]
 
   createdAt   DateTime @default(now())
+
+  @@map("attendance_sessions")
 }
 
-
+/* ================= ATTENDANCE (Rekam Absensi) ================= */
 model Attendance {
   id         Int      @id @default(autoincrement())
   studentId  Int
@@ -123,10 +138,11 @@ model Attendance {
   createdBy  Int
   createdAt  DateTime @default(now())
 
-  student    Student  @relation(fields: [studentId], references: [id])
-  class      Class    @relation(fields: [classId], references: [id])
+  student    Student           @relation(fields: [studentId], references: [id])
+  class      Class             @relation(fields: [classId], references: [id])
   session    AttendanceSession @relation(fields: [sessionId], references: [id])
-  creator    User     @relation("CreatedBy", fields: [createdBy], references: [id])
+  creator    User              @relation("CreatedBy", fields: [createdBy], references: [id])
 
   @@unique([studentId, sessionId])
+  @@map("attendance")
 }
