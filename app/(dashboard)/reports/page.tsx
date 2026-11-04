@@ -1,0 +1,1 @@
+export default function ReportsPage() { return <section><p className="text-sm font-semibold text-blue-600">ANALYTICS</p><h1 className="mt-2 text-3xl font-bold text-slate-900">Laporan Kehadiran</h1><p className="mt-3 text-slate-500">Modul laporan dan ekspor sedang dalam tahap pemulihan. Data laporan akan tersedia setelah API absensi tervalidasi.</p></section>; }
