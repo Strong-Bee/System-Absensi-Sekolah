@@ -1,0 +1,1 @@
+export default function SettingsPage() { return <section><p className="text-sm font-semibold text-blue-600">PREFERENCES</p><h1 className="mt-2 text-3xl font-bold text-slate-900">Pengaturan</h1><p className="mt-3 text-slate-500">Pengaturan sistem dan administrasi akun akan ditambahkan setelah modul inti selesai diverifikasi.</p></section>; }

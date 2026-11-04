@@ -1,0 +1,1 @@
+export default function ClassesPage() { return <section><p className="text-sm font-semibold text-blue-600">MASTER DATA</p><h1 className="mt-2 text-3xl font-bold text-slate-900">Data Kelas</h1><p className="mt-3 text-slate-500">Halaman manajemen kelas sedang dalam tahap pemulihan. Relasi guru, kapasitas, dan keanggotaan kelas perlu diuji sebelum digunakan.</p></section>; }
